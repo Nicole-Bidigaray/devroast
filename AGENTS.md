@@ -5,7 +5,7 @@
 - Node: use `nvm use` (`.nvmrc` = 22).
 - Exports: always named exports, never default exports.
 - UI scope: keep reusable primitives in `src/components/ui`; page-specific blocks go to feature/layout folders.
-- Composition pattern: use composition in `AnalysisCard` and `LeaderboardRow`; keep simpler APIs in other components.
+- API design: prefer simple props by default; use composition when it improves clarity in complex components.
 - Styling: use Tailwind classes with tokens defined in `@theme` (`text-*`, `bg-*`, `border-*`).
 - Fonts: `font-mono` for monospaced text, `font-sans` for regular text.
 - Behavior: use Base UI primitives for interactive components when applicable.

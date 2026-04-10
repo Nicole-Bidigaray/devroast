@@ -1,20 +1,20 @@
 # devroast
 
-`devroast` is a playful web app where you paste a code snippet and get a roast-style analysis.
+O `devroast` e um app para colar trechos de codigo e receber uma analise em tom de roast.
 
-The experience focuses on:
+## O que voce encontra no app
 
-- an input area to paste code quickly
-- a "roast mode" toggle for a more sarcastic tone
-- score and feedback highlights
-- a leaderboard preview with the most "questionable" snippets
+- area para colar codigo rapidamente
+- toggle de "roast mode" para um tom mais sarcastico
+- destaque de nota e feedback
+- preview de leaderboard com os codigos mais "duvidosos"
 
-## Why this project exists
+## Sobre o projeto
 
-This app is being built during **NLW (Next Level Week) by Rocketseat**, following the event classes and evolving each screen step by step.
+Este app esta sendo construido durante o **NLW (Next Level Week) da Rocketseat**, seguindo as aulas do evento e evoluindo tela por tela.
 
-## Current status
+## Status atual
 
-The frontend foundation is ready with reusable UI components and static screens based on the design system.
+O frontend base ja esta pronto, com componentes reutilizaveis de UI e telas estaticas baseadas no design.
 
-Next steps include connecting the app flow, dynamic analysis, and leaderboard data.
+Os proximos passos incluem conectar o fluxo real da aplicacao, analise dinamica e dados do leaderboard.
