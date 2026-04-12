@@ -18,6 +18,14 @@ Este projeto esta sendo construido durante o **NLW (Next Level Week) da Rocketse
 - Tailwind CSS v4
 - Biome (lint/format)
 
+## Stack de banco (especificado)
+
+- Drizzle ORM (`drizzle-orm`)
+- Drizzle Kit (`drizzle-kit`)
+- PostgreSQL 16
+- Docker Compose
+- Driver `pg` (node-postgres)
+
 ## Pre-requisitos
 
 - Node.js 22
@@ -51,6 +59,12 @@ No estado atual, o frontend nao exige variaveis de ambiente para rodar localment
 
 Quando houver integracao com API, as variaveis necessarias serao documentadas aqui.
 
+Para o setup de banco (Drizzle + Postgres), usar:
+
+```env
+DATABASE_URL=postgresql://devroast:devroast@localhost:5434/devroast
+```
+
 ## Rodando o frontend
 
 ### Desenvolvimento
@@ -82,6 +96,59 @@ pnpm start
 pnpm lint
 pnpm format
 ```
+
+## Banco de dados (Drizzle + Postgres)
+
+### 1) Subir Postgres com Docker Compose
+
+```bash
+docker compose up -d
+```
+
+### 2) Dependencias
+
+Producao:
+
+```bash
+pnpm add drizzle-orm pg
+```
+
+Desenvolvimento:
+
+```bash
+pnpm add -D drizzle-kit @types/pg dotenv
+```
+
+### 3) Arquivos esperados
+
+- `docker-compose.yml`
+- `drizzle.config.ts`
+- `src/db/schema.ts`
+- `src/db/index.ts`
+- `.env.local`
+
+### 4) Scripts de banco
+
+```json
+{
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  }
+}
+```
+
+### 5) Fluxo recomendado
+
+```bash
+pnpm db:generate
+pnpm db:migrate
+pnpm db:studio
+```
+
+Especificacao completa: `specs/drizzle-postgres-spec.md`
 
 ## Rotas principais
 

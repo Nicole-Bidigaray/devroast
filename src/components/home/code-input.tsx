@@ -1,25 +1,177 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Textarea } from "@/components/ui/textarea";
+import {
+  EDITOR_LANGUAGES,
+  type EditorLanguageId,
+  FALLBACK_LANGUAGE,
+  getEditorLanguageLabel,
+  type LanguageMode,
+} from "@/lib/code-languages";
+import { detectLanguageFromCode } from "@/lib/detect-language";
+import { highlightCodeToHtml } from "@/lib/shiki-client";
 
 export function CodeInput() {
   const [code, setCode] = useState("");
+  const [highlightedCode, setHighlightedCode] = useState("");
+  const [isHighlightPending, setIsHighlightPending] = useState(false);
+  const [languageMode, setLanguageMode] = useState<LanguageMode>("auto");
+  const [detectedLanguage, setDetectedLanguage] =
+    useState<EditorLanguageId>(FALLBACK_LANGUAGE);
+  const [manualLanguage, setManualLanguage] =
+    useState<EditorLanguageId>("typescript");
+
   const gutterRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const highlightedLayerRef = useRef<HTMLDivElement>(null);
+  const detectTimeoutRef = useRef<number | null>(null);
+  const highlightTimeoutRef = useRef<number | null>(null);
+
+  const activeLanguage =
+    languageMode === "manual" ? manualLanguage : detectedLanguage;
+
+  const languageSelectValue = languageMode === "auto" ? "auto" : manualLanguage;
+
+  const activeLanguageLabel =
+    languageMode === "manual"
+      ? getEditorLanguageLabel(activeLanguage)
+      : `${getEditorLanguageLabel(activeLanguage)} (auto)`;
 
   const totalLines = useMemo(() => {
     const lineCount = code.split(/\r\n|\r|\n/).length;
     return Math.max(16, lineCount);
   }, [code]);
 
+  useEffect(() => {
+    if (languageMode !== "auto") {
+      return;
+    }
+
+    if (detectTimeoutRef.current) {
+      window.clearTimeout(detectTimeoutRef.current);
+    }
+
+    detectTimeoutRef.current = window.setTimeout(() => {
+      setDetectedLanguage((currentLanguage) =>
+        detectLanguageFromCode({
+          code,
+          previousLanguage: currentLanguage,
+        }),
+      );
+    }, 300);
+
+    return () => {
+      if (detectTimeoutRef.current) {
+        window.clearTimeout(detectTimeoutRef.current);
+      }
+    };
+  }, [code, languageMode]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    setIsHighlightPending(true);
+
+    if (highlightTimeoutRef.current) {
+      window.clearTimeout(highlightTimeoutRef.current);
+    }
+
+    highlightTimeoutRef.current = window.setTimeout(async () => {
+      const nextHighlightedCode = await highlightCodeToHtml(
+        code || " ",
+        activeLanguage,
+      );
+
+      if (isMounted) {
+        setHighlightedCode(nextHighlightedCode);
+        setIsHighlightPending(false);
+      }
+    }, 40);
+
+    return () => {
+      isMounted = false;
+      if (highlightTimeoutRef.current) {
+        window.clearTimeout(highlightTimeoutRef.current);
+      }
+    };
+  }, [activeLanguage, code]);
+
+  function syncScrollPositions(scrollTop: number, scrollLeft: number) {
+    if (gutterRef.current) {
+      gutterRef.current.scrollTop = scrollTop;
+    }
+
+    if (highlightedLayerRef.current) {
+      highlightedLayerRef.current.scrollTop = scrollTop;
+      highlightedLayerRef.current.scrollLeft = scrollLeft;
+    }
+  }
+
+  function handleLanguageChange(nextValue: string) {
+    if (nextValue === "auto") {
+      setLanguageMode("auto");
+      setDetectedLanguage((currentLanguage) =>
+        detectLanguageFromCode({
+          code,
+          previousLanguage: currentLanguage,
+        }),
+      );
+      return;
+    }
+
+    const selectedLanguage = EDITOR_LANGUAGES.find(
+      (language) => language.id === nextValue,
+    );
+
+    if (!selectedLanguage) {
+      return;
+    }
+
+    setManualLanguage(selectedLanguage.id);
+    setLanguageMode("manual");
+  }
+
   return (
-    <section className="w-full max-w-[780px] overflow-hidden border border-border-primary bg-bg-input">
-      <div className="flex h-10 items-center border-b border-border-primary px-4">
+    <section className="w-full max-w-195 overflow-hidden border border-border-primary bg-bg-input">
+      <div className="flex h-10 items-center justify-between border-b border-border-primary px-4">
         <div className="flex items-center gap-2">
           <span className="size-3 rounded-full bg-[#EF4444]" />
           <span className="size-3 rounded-full bg-[#F59E0B]" />
           <span className="size-3 rounded-full bg-[#10B981]" />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="sr-only" htmlFor="language-select">
+            selecionar linguagem
+          </label>
+          <div className="relative">
+            <select
+              className="appearance-none border border-border-primary bg-bg-surface py-1 pl-2 pr-6 font-mono text-[11px] text-text-secondary outline-none transition-colors focus-visible:border-accent-green"
+              id="language-select"
+              onChange={(event) => {
+                handleLanguageChange(event.target.value);
+              }}
+              value={languageSelectValue}
+            >
+              <option value="auto">{`auto detect (${getEditorLanguageLabel(detectedLanguage)})`}</option>
+              {EDITOR_LANGUAGES.map((language) => (
+                <option key={language.id} value={language.id}>
+                  {language.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              aria-hidden="true"
+              className="pointer-events-none absolute right-1.5 top-1/2 size-3 -translate-y-1/2 text-text-tertiary"
+            />
+          </div>
+
+          <span className="font-mono text-[11px] text-text-tertiary">
+            {activeLanguageLabel}
+          </span>
         </div>
       </div>
 
@@ -44,20 +196,45 @@ export function CodeInput() {
           </div>
         </div>
 
-        <div className="flex-1">
+        <div className="relative flex-1">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 overflow-auto px-4 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&_code]:font-mono [&_code]:text-xs [&_code]:leading-5 [&_pre]:m-0! [&_pre]:bg-transparent! [&_pre]:p-0!"
+            data-visible={!isHighlightPending}
+            ref={highlightedLayerRef}
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: HTML generated by Shiki
+            dangerouslySetInnerHTML={{ __html: highlightedCode }}
+            style={{ opacity: isHighlightPending ? 0 : 1 }}
+          />
+
+          {code.length === 0 ? (
+            <span className="pointer-events-none absolute left-4 top-4 font-mono text-xs text-text-tertiary">
+              {"// cole seu codigo aqui"}
+            </span>
+          ) : null}
+
           <Textarea
-            className="h-full min-h-0 border-0 bg-transparent px-4 py-4 text-xs leading-5 text-text-primary focus-visible:border-0"
+            aria-label="editor de codigo"
+            className="relative h-full min-h-0 border-0 bg-transparent px-4 py-4 text-xs leading-5 caret-text-primary selection:bg-accent-green/25 focus-visible:border-0"
             onChange={(event) => {
-              setCode(event.target.value);
+              const nextCode = event.target.value;
+              setCode(nextCode);
             }}
             onScroll={(event) => {
-              if (gutterRef.current) {
-                gutterRef.current.scrollTop = event.currentTarget.scrollTop;
-              }
+              syncScrollPositions(
+                event.currentTarget.scrollTop,
+                event.currentTarget.scrollLeft,
+              );
             }}
-            placeholder="// cole seu codigo aqui"
+            placeholder=""
+            ref={textareaRef}
             resize="none"
             spellCheck={false}
+            style={{
+              color: isHighlightPending
+                ? "var(--color-text-primary)"
+                : "transparent",
+            }}
             value={code}
           />
         </div>
