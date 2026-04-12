@@ -2,8 +2,10 @@ import { initTRPC } from "@trpc/server";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { cache } from "react";
 
+import { db } from "@/db";
+
 export async function createTRPCContext(_opts?: FetchCreateContextFnOptions) {
-  return {};
+  return { db };
 }
 
 export const createTRPCContextCached = cache(createTRPCContext);
