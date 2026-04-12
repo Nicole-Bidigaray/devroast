@@ -5,6 +5,7 @@ import {
   type ComponentPropsWithoutRef,
   type ElementRef,
   forwardRef,
+  useId,
 } from "react";
 import { tv } from "tailwind-variants";
 
@@ -28,8 +29,21 @@ export type ToggleProps = Omit<
 };
 
 export const Toggle = forwardRef<ElementRef<typeof Switch.Root>, ToggleProps>(
-  ({ checked, className, defaultChecked = true, label, ...props }, ref) => {
+  (
+    {
+      checked,
+      className,
+      defaultChecked = true,
+      id,
+      label,
+      nativeButton = true,
+      ...props
+    },
+    ref,
+  ) => {
     const styles = toggleStyles();
+    const generatedId = useId();
+    const resolvedId = id ?? generatedId;
 
     return (
       <div className={styles.container()}>
@@ -37,6 +51,8 @@ export const Toggle = forwardRef<ElementRef<typeof Switch.Root>, ToggleProps>(
           checked={checked}
           className={styles.root({ className })}
           defaultChecked={defaultChecked}
+          id={resolvedId}
+          nativeButton={nativeButton}
           ref={ref}
           {...props}
         >
