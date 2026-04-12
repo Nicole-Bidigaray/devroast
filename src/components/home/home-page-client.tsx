@@ -19,7 +19,7 @@ export function HomePageClient() {
   }, [code]);
 
   return (
-    <main className="mx-auto flex w-full max-w-[1120px] flex-col items-center gap-8 px-4 py-20 md:px-10">
+    <main className="mx-auto flex w-full max-w-280 flex-col items-center gap-8 px-4 py-20 md:px-10">
       <section className="space-y-3 text-center">
         <div className="flex items-center justify-center gap-3">
           <span className="font-mono text-4xl font-bold text-accent-green">
