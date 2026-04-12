@@ -6,6 +6,16 @@ import { useEffect, useState } from "react";
 
 import { useTRPC } from "@/trpc/client";
 
+const numberFlowTiming = {
+  duration: 1600,
+  easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+};
+
+const numberFlowOpacityTiming = {
+  duration: 700,
+  easing: "ease-out",
+};
+
 export function HomeMetrics() {
   const trpc = useTRPC();
   const { data } = useQuery(trpc.metrics.home.queryOptions());
@@ -17,8 +27,14 @@ export function HomeMetrics() {
       return;
     }
 
-    setRoastedCodes(data.totalRoastedCodes);
-    setAvgScore(data.avgScore);
+    const timeoutId = window.setTimeout(() => {
+      setRoastedCodes(data.totalRoastedCodes);
+      setAvgScore(data.avgScore);
+    }, 220);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
   }, [data]);
 
   return (
@@ -27,6 +43,9 @@ export function HomeMetrics() {
         <NumberFlow
           className="font-mono tabular-nums"
           format={{ maximumFractionDigits: 0 }}
+          opacityTiming={numberFlowOpacityTiming}
+          spinTiming={numberFlowTiming}
+          transformTiming={numberFlowTiming}
           value={roastedCodes}
         />{" "}
         codes roasted
@@ -42,6 +61,9 @@ export function HomeMetrics() {
             maximumFractionDigits: 1,
             minimumFractionDigits: 1,
           }}
+          opacityTiming={numberFlowOpacityTiming}
+          spinTiming={numberFlowTiming}
+          transformTiming={numberFlowTiming}
           value={avgScore}
         />
         /10

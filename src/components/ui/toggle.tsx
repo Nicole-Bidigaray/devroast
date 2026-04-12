@@ -37,6 +37,7 @@ export const Toggle = forwardRef<ElementRef<typeof Switch.Root>, ToggleProps>(
       id,
       label,
       nativeButton = true,
+      render,
       ...props
     },
     ref,
@@ -44,6 +45,9 @@ export const Toggle = forwardRef<ElementRef<typeof Switch.Root>, ToggleProps>(
     const styles = toggleStyles();
     const generatedId = useId();
     const resolvedId = id ?? generatedId;
+    const resolvedRender = nativeButton
+      ? (render ?? <button type="button" />)
+      : render;
 
     return (
       <div className={styles.container()}>
@@ -53,6 +57,7 @@ export const Toggle = forwardRef<ElementRef<typeof Switch.Root>, ToggleProps>(
           defaultChecked={defaultChecked}
           id={resolvedId}
           nativeButton={nativeButton}
+          render={resolvedRender}
           ref={ref}
           {...props}
         >
