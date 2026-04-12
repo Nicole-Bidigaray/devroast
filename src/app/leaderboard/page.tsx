@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
+import type { BundledLanguage } from "shiki";
 
 import { LeaderboardEntryCard } from "@/components/leaderboard/leaderboard-entry-card";
 
 type LeaderboardEntry = {
-  codeLines: Array<{
-    content: string;
-    tone?: "default" | "comment";
-  }>;
-  language: string;
-  lineCount: number;
+  code: string;
+  language: BundledLanguage;
   rank: number;
   score: string;
 };
@@ -18,55 +15,45 @@ const leaderboardEntries: LeaderboardEntry[] = [
     rank: 1,
     score: "1.2",
     language: "javascript",
-    lineCount: 3,
-    codeLines: [
-      { content: 'eval(prompt("enter code"))' },
-      { content: "document.write(response)" },
-      { content: "// trust the user lol", tone: "comment" },
-    ],
+    code: [
+      'eval(prompt("enter code"))',
+      "document.write(response)",
+      "// trust the user lol",
+    ].join("\n"),
   },
   {
     rank: 2,
     score: "1.8",
     language: "typescript",
-    lineCount: 3,
-    codeLines: [
-      { content: "if (x == true) { return true; }" },
-      { content: "else if (x == false) { return false; }" },
-      { content: "else { return !false; }" },
-    ],
+    code: [
+      "if (x == true) { return true; }",
+      "else if (x == false) { return false; }",
+      "else { return !false; }",
+    ].join("\n"),
   },
   {
     rank: 3,
     score: "2.1",
     language: "sql",
-    lineCount: 2,
-    codeLines: [
-      { content: "SELECT * FROM users WHERE 1=1" },
-      { content: "-- TODO: add authentication", tone: "comment" },
-    ],
+    code: ["SELECT * FROM users WHERE 1=1", "-- TODO: add authentication"].join(
+      "\n",
+    ),
   },
   {
     rank: 4,
     score: "2.3",
     language: "java",
-    lineCount: 3,
-    codeLines: [
-      { content: "catch (e) {" },
-      { content: "  // ignore" },
-      { content: "}" },
-    ],
+    code: ["catch (e) {", "  // ignore", "}"].join("\n"),
   },
   {
     rank: 5,
     score: "2.5",
     language: "javascript",
-    lineCount: 3,
-    codeLines: [
-      { content: "const sleep = (ms) =>" },
-      { content: "  new Date(Date.now() + ms);" },
-      { content: "while(Date.now() < end) {}" },
-    ],
+    code: [
+      "const sleep = (ms) =>",
+      "  new Date(Date.now() + ms);",
+      "while(Date.now() < end) {}",
+    ].join("\n"),
   },
 ];
 
@@ -104,10 +91,9 @@ export default function LeaderboardPage() {
       <section className="flex w-full flex-col gap-5">
         {leaderboardEntries.map((entry) => (
           <LeaderboardEntryCard
-            codeLines={entry.codeLines}
+            code={entry.code}
             key={`leaderboard-entry-${entry.rank}`}
             language={entry.language}
-            lineCount={entry.lineCount}
             rank={entry.rank}
             score={entry.score}
           />

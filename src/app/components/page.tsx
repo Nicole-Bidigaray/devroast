@@ -103,17 +103,29 @@ export default function ComponentsPage() {
 
       <section className="space-y-6">
         <SectionTitle>code_block</SectionTitle>
-        <CodeBlock
-          code={[
-            "function calculateTotal(items) {",
-            "  var total = 0;",
-            "  for (var i = 0; ...) {",
-            "    total = total + items[i].price;",
-            "  }",
-          ].join("\n")}
-          fileName="calculate.js"
-          language="javascript"
-        />
+        <div className="w-fit border border-border-primary bg-bg-input">
+          <div className="flex h-10 items-center gap-3 border-b border-border-primary px-4">
+            <span className="size-2.5 rounded-full bg-[#EF4444]" />
+            <span className="size-2.5 rounded-full bg-[#F59E0B]" />
+            <span className="size-2.5 rounded-full bg-[#10B981]" />
+            <span className="h-px flex-1" />
+            <span className="font-mono text-xs text-text-tertiary">
+              calculate.js
+            </span>
+          </div>
+
+          <CodeBlock
+            className="max-w-140 border-0"
+            code={[
+              "function calculateTotal(items) {",
+              "  var total = 0;",
+              "  for (var i = 0; ...) {",
+              "    total = total + items[i].price;",
+              "  }",
+            ].join("\n")}
+            language="javascript"
+          />
+        </div>
       </section>
 
       <section className="space-y-6">

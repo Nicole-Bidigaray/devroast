@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 type CodeBlockProps = {
   className?: string;
   code: string;
-  fileName?: string;
   language?: BundledLanguage;
   showLineNumbers?: boolean;
 };
@@ -15,7 +14,6 @@ type CodeBlockProps = {
 export async function CodeBlock({
   className,
   code,
-  fileName = "snippet.ts",
   language = "ts",
   showLineNumbers = true,
 }: CodeBlockProps) {
@@ -33,14 +31,6 @@ export async function CodeBlock({
         className,
       )}
     >
-      <div className="flex h-10 items-center gap-3 border-b border-border-primary px-4">
-        <span className="size-2.5 rounded-full bg-[#EF4444]" />
-        <span className="size-2.5 rounded-full bg-[#F59E0B]" />
-        <span className="size-2.5 rounded-full bg-[#10B981]" />
-        <span className="h-px flex-1" />
-        <span className="font-mono text-xs text-text-tertiary">{fileName}</span>
-      </div>
-
       <div className="flex">
         {showLineNumbers ? (
           <div className="flex w-10 flex-col items-end gap-1.5 border-r border-border-primary bg-bg-surface px-2.5 py-3">
