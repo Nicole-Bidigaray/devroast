@@ -14,8 +14,22 @@ import {
 import { detectLanguageFromCode } from "@/lib/detect-language";
 import { highlightCodeToHtml } from "@/lib/shiki-client";
 
-export function CodeInput() {
-  const [code, setCode] = useState("");
+type CodeInputProps = {
+  characterLimit: number;
+  code: string;
+  onCodeChange: (nextCode: string) => void;
+};
+
+export function CodeInput({
+  characterLimit,
+  code,
+  onCodeChange,
+}: CodeInputProps) {
+  const MIN_EDITOR_HEIGHT = 320;
+  const MAX_EDITOR_HEIGHT = 512;
+  const LINE_HEIGHT = 20;
+  const VERTICAL_PADDING = 32;
+
   const [highlightedCode, setHighlightedCode] = useState("");
   const [isHighlightPending, setIsHighlightPending] = useState(false);
   const [languageMode, setLanguageMode] = useState<LanguageMode>("auto");
@@ -44,6 +58,17 @@ export function CodeInput() {
     const lineCount = code.split(/\r\n|\r|\n/).length;
     return Math.max(16, lineCount);
   }, [code]);
+
+  const editorHeight = useMemo(() => {
+    const contentHeight = totalLines * LINE_HEIGHT + VERTICAL_PADDING;
+
+    return Math.min(
+      MAX_EDITOR_HEIGHT,
+      Math.max(MIN_EDITOR_HEIGHT, contentHeight),
+    );
+  }, [totalLines]);
+
+  const isOverCharacterLimit = code.length > characterLimit;
 
   useEffect(() => {
     if (languageMode !== "auto") {
@@ -175,7 +200,7 @@ export function CodeInput() {
         </div>
       </div>
 
-      <div className="flex h-80">
+      <div className="flex" style={{ height: editorHeight }}>
         <div className="w-12 border-r border-border-primary bg-bg-surface">
           <div
             className="h-full overflow-y-auto px-3 py-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -217,8 +242,8 @@ export function CodeInput() {
             aria-label="editor de codigo"
             className="relative h-full min-h-0 border-0 bg-transparent px-4 py-4 text-xs leading-5 caret-text-primary selection:bg-accent-green/25 focus-visible:border-0"
             onChange={(event) => {
-              const nextCode = event.target.value;
-              setCode(nextCode);
+              const nextCode = event.target.value.slice(0, characterLimit);
+              onCodeChange(nextCode);
             }}
             onScroll={(event) => {
               syncScrollPositions(
@@ -230,6 +255,7 @@ export function CodeInput() {
             ref={textareaRef}
             resize="none"
             spellCheck={false}
+            maxLength={characterLimit}
             style={{
               color: isHighlightPending
                 ? "var(--color-text-primary)"
@@ -238,6 +264,14 @@ export function CodeInput() {
             value={code}
           />
         </div>
+      </div>
+
+      <div className="flex h-8 items-center justify-end border-t border-border-primary px-3">
+        <span
+          className={`font-mono text-[11px] ${isOverCharacterLimit ? "text-accent-red" : "text-text-tertiary"}`}
+        >
+          {code.length}/{characterLimit} chars
+        </span>
       </div>
     </section>
   );

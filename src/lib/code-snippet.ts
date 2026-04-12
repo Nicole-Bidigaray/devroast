@@ -1,0 +1,1 @@
+export const CODE_SNIPPET_CHARACTER_LIMIT = 2000;
