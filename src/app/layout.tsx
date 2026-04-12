@@ -3,6 +3,7 @@ import { JetBrains_Mono } from "next/font/google";
 
 import { Navbar } from "@/components/layout/navbar";
 import { cn } from "@/lib/utils";
+import { TRPCReactProvider } from "@/trpc/client";
 
 import "./globals.css";
 
@@ -25,7 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={cn(jetbrainsMono.variable, "font-sans antialiased")}>
         <Navbar />
-        {children}
+        <TRPCReactProvider>{children}</TRPCReactProvider>
       </body>
     </html>
   );

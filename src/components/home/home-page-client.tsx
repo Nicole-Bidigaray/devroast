@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { SectionTitle } from "@/components/ui/section-title";
@@ -9,6 +9,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { CODE_SNIPPET_CHARACTER_LIMIT } from "@/lib/code-snippet";
 
 import { CodeInput } from "./code-input";
+import { HomeMetrics, HomeMetricsSkeleton } from "./home-metrics";
 
 export function HomePageClient() {
   const [code, setCode] = useState("");
@@ -56,15 +57,9 @@ export function HomePageClient() {
         <Button disabled={isSnippetOverLimit}>$ roast_my_code</Button>
       </section>
 
-      <section className="flex items-center gap-6">
-        <p className="font-sans text-xs text-text-tertiary">
-          2,847 codes roasted
-        </p>
-        <p className="font-mono text-xs text-text-tertiary">·</p>
-        <p className="font-sans text-xs text-text-tertiary">
-          avg score: 4.2/10
-        </p>
-      </section>
+      <Suspense fallback={<HomeMetricsSkeleton />}>
+        <HomeMetrics />
+      </Suspense>
 
       <section className="mt-8 flex w-full max-w-5xl flex-col gap-6">
         <div className="flex items-center justify-between">
