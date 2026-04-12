@@ -1,22 +1,25 @@
 "use client";
 
 import NumberFlow from "@number-flow/react";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 import { useTRPC } from "@/trpc/client";
 
 export function HomeMetrics() {
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(trpc.metrics.home.queryOptions());
-  const [animate, setAnimate] = useState(false);
+  const { data } = useQuery(trpc.metrics.home.queryOptions());
+  const [roastedCodes, setRoastedCodes] = useState(0);
+  const [avgScore, setAvgScore] = useState(0);
 
   useEffect(() => {
-    setAnimate(true);
-  }, []);
+    if (!data) {
+      return;
+    }
 
-  const roastedCodes = animate ? data.totalRoastedCodes : 0;
-  const avgScore = animate ? data.avgScore : 0;
+    setRoastedCodes(data.totalRoastedCodes);
+    setAvgScore(data.avgScore);
+  }, [data]);
 
   return (
     <section className="flex items-center gap-6">
@@ -43,16 +46,6 @@ export function HomeMetrics() {
         />
         /10
       </p>
-    </section>
-  );
-}
-
-export function HomeMetricsSkeleton() {
-  return (
-    <section className="flex items-center gap-6">
-      <div className="h-3 w-36 animate-pulse bg-bg-surface" />
-      <div className="h-3 w-2 animate-pulse bg-bg-surface" />
-      <div className="h-3 w-26 animate-pulse bg-bg-surface" />
     </section>
   );
 }
