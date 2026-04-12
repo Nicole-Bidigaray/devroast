@@ -1,12 +1,8 @@
 "use client";
 
 import NumberFlow, { continuous } from "@number-flow/react";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 
-import { useTRPC } from "@/trpc/client";
-
-const ROASTED_CODES_ANIMATION_DURATION_MS = 2000;
+import { useHomeMetrics } from "@/hooks/use-home-metrics";
 
 const numberFlowTiming = {
   duration: 4200,
@@ -24,51 +20,7 @@ const numberFlowOpacityTiming = {
 };
 
 export function HomeMetrics() {
-  const trpc = useTRPC();
-  const { data } = useQuery(trpc.roast.getStats.queryOptions());
-  const [roastedCodes, setRoastedCodes] = useState(0);
-  const [avgScore, setAvgScore] = useState(0);
-
-  useEffect(() => {
-    if (!data) {
-      return;
-    }
-
-    let animationFrameId = 0;
-    const target = data.totalRoasts;
-    const start = performance.now();
-
-    const animate = (now: number) => {
-      const elapsed = now - start;
-      const progress = Math.min(
-        elapsed / ROASTED_CODES_ANIMATION_DURATION_MS,
-        1,
-      );
-      const nextValue = Math.round(target * progress);
-
-      setRoastedCodes((currentValue) =>
-        currentValue === nextValue ? currentValue : nextValue,
-      );
-
-      if (progress < 1) {
-        animationFrameId = window.requestAnimationFrame(animate);
-      }
-    };
-
-    animationFrameId = window.requestAnimationFrame(animate);
-
-    return () => {
-      window.cancelAnimationFrame(animationFrameId);
-    };
-  }, [data]);
-
-  useEffect(() => {
-    if (!data) {
-      return;
-    }
-
-    setAvgScore(data.avgScore);
-  }, [data]);
+  const { avgScore, roastedCodes } = useHomeMetrics();
 
   return (
     <section className="flex items-center gap-6">
