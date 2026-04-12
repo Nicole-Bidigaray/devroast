@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function Navbar() {
   return (
     <header className="flex h-14 w-full items-center border-b border-border-primary bg-bg-page px-6">
@@ -12,9 +14,12 @@ export function Navbar() {
 
       <span className="flex-1" />
 
-      <span className="font-mono text-[13px] text-text-secondary">
+      <Link
+        className="font-mono text-[13px] text-text-secondary transition-colors hover:text-text-primary"
+        href="/leaderboard"
+      >
         leaderboard
-      </span>
+      </Link>
     </header>
   );
 }
