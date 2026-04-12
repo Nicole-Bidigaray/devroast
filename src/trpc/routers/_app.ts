@@ -1,9 +1,9 @@
 import { createTRPCRouter } from "@/trpc/init";
 
-import { metricsRouter } from "./metrics";
+import { roastRouter } from "./metrics";
 
 export const appRouter = createTRPCRouter({
-  metrics: metricsRouter,
+  roast: roastRouter,
 });
 
 export type AppRouter = typeof appRouter;
