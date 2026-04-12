@@ -43,7 +43,11 @@ export function HomePageClient() {
 
       <section className="flex w-full max-w-3xl items-center justify-between">
         <div className="flex items-center gap-4">
-          <Toggle defaultChecked label="roast mode" />
+          <Toggle
+            defaultChecked
+            id="home-roast-mode-toggle"
+            label="roast mode"
+          />
           <p className="font-sans text-xs text-text-tertiary">
             {"// maximum sarcasm enabled"}
           </p>
