@@ -62,6 +62,8 @@ className={buttonVariants({ variant, size, className })}
 - Para comportamento interativo, usar primitivos do Base UI (`@base-ui/react`).
 - Exemplo: toggles/switches devem usar `Switch.Root` e `Switch.Thumb`.
 - Quando componente usar eventos/estado do browser, marcar arquivo com `"use client"`.
+- Em `Toggle`, manter `id` estavel para evitar hydration mismatch.
+- Se `nativeButton` estiver `true` no `Switch.Root`, garantir `render={<button type="button" />}` (ou equivalente) para preservar semantica nativa.
 
 ## 8) Code Block
 

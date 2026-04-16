@@ -10,3 +10,6 @@
 - Fonts: `font-mono` for monospaced text, `font-sans` for regular text.
 - Behavior: use Base UI primitives for interactive components when applicable.
 - Quality gate: run `pnpm lint` and `pnpm build` before finishing changes.
+- Process: document feature scope in `specs/` and align spec before implementation.
+- Routing convention: roast result page uses `src/app/roast/[id]/page.tsx` (`/roast/:id`).
+- Design workflow: when user references selected Pencil layout, use Pencil MCP as source of truth.
