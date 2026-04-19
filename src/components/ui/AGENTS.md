@@ -71,6 +71,8 @@ className={buttonVariants({ variant, size, className })}
 - Use `shiki` com tema `vesper`.
 - Adicionar `import "server-only"` no componente.
 - Receber `code` e `language` como props, evitando JSX linha-a-linha.
+- `CodeBlock` deve ser reaproveitavel: nao incluir header visual fixo (bolinhas/macOS/nome de arquivo) dentro do componente.
+- Quando precisar header de arquivo, montar esse chrome no local de uso.
 
 ## 9) Checklist antes de finalizar
 
