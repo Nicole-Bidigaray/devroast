@@ -11,6 +11,7 @@ Objetivo: padronizar specs em `specs/` antes de implementar features.
 - Preferir arquivo canonico por feature: `slug-da-feature.md`.
 - Quando precisar snapshot historico, usar: `YYYY-MM-DD-slug-da-feature.md`.
 - Slug curto, descritivo e em kebab-case.
+- Evitar manter duas versoes ativas da mesma spec; manter 1 fonte de verdade.
 
 ## Estrutura obrigatoria
 
@@ -71,6 +72,8 @@ Objetivo: padronizar specs em `specs/` antes de implementar features.
 - Em implementacao incremental, o spec deve explicitar o recorte da fase atual.
 - Para integracoes externas (ex.: tRPC, Next RSC), incluir links oficiais em `## Referencias`.
 - Quando houver tela baseada em design (ex.: Pencil), descrever no spec o alvo visual e limites de implementacao (dados estaticos, SSR, etc.).
+- Quando houver rota dinamica, declarar formato de parametro (ex.: UUID) e comportamento de erro.
+- Se houver carregamento animado no frontend, especificar estrategia de loading (ex.: sem suspense/skeleton, iniciar em 0 e animar).
 
 ## Fluxo recomendado
 
@@ -79,3 +82,8 @@ Objetivo: padronizar specs em `specs/` antes de implementar features.
 3. Implementar somente o escopo aprovado.
 4. Atualizar o spec se o escopo mudar.
 5. Encerrar com checklist de validacao completo.
+
+## Estado atual relevante
+
+- Spec canonica de tRPC: `specs/trpc.md`.
+- Specs antigas datadas podem ser removidas quando a versao canonica estiver atualizada.
