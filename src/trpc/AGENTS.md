@@ -19,7 +19,7 @@ src/trpc/
   server.tsx          # "server-only" - trpc proxy, getQueryClient, HydrateClient, caller
   routers/
     _app.ts           # Root appRouter (merges all sub-routers)
-    metrics.ts        # Roast stats procedures (exports roastRouter)
+    roast.ts          # Roast stats procedures (exports roastRouter)
 ```
 
 ## Adding a New Router
@@ -44,6 +44,7 @@ export const exampleRouter = createTRPCRouter({
 - Validate input with Zod: `.input(z.object({ ... }))`
 - Access database via `ctx.db` (Drizzle client)
 - Keep procedures thin - query logic lives in the procedure
+- If a procedure has independent DB reads, always execute them with `await Promise.all([...])`
 
 ## Server Components (Prefetch + Hydration)
 
@@ -109,9 +110,9 @@ function Component() {
 ## Conventions
 
 - One router per domain - `roast.ts`, `leaderboard.ts`, etc.
-- Current stats router file is `metrics.ts`, exporting `roastRouter`
+- Current stats router file is `roast.ts`, exporting `roastRouter`
 - Flat procedures - no deep nesting (`trpc.roast.getStats`, not `trpc.roast.stats.get`)
-- Parallel queries - when independent queries are needed, use `Promise.all()`
+- Parallel queries - when independent queries are needed, use `await Promise.all()`
 - Return parsed numbers - `avg()` returns string in SQL; use `Number.parseFloat()` before returning
 - No superjson - Drizzle returns plain objects
 - `staleTime: 30s` - default in `query-client.ts`
